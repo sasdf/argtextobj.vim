@@ -124,7 +124,7 @@ function! s:GetOutOfDoubleQuote()
     " in double quote
     call setline('.', line)
     if getpos('.')==getpos("'<")
-      normal h
+      call <SID>MoveLeft(1)
     else
       normal F"
   endif
@@ -155,7 +155,8 @@ endfunction
 function! s:GetPair(pos)
   let pos_save = getpos('.')
   call setpos('.', a:pos)
-  normal %h
+  normal %
+  call <SID>MoveLeft(1)
   let pair_pos = getpos('.')
   call setpos('.', pos_save)
   return pair_pos
@@ -165,7 +166,8 @@ function! s:GetInnerText(r1, r2)
   let pos_save = getpos('.')
   let reg_save = @@
   call setpos('.', a:r1)
-  normal lv
+  call <SID>MoveRight(1)
+  normal v
   call setpos('.', a:r2)
   normal y
   let val = @@
@@ -192,7 +194,7 @@ function! s:MoveToNextNonSpace()
   let moved = 0
   """echo 'move:' . getline('.')[getpos('.')[2]-1]
   while getline('.')[getpos('.')[2]-1]==' '
-    normal l
+    call <SID>MoveRight(1)
     if oldp == getpos('.')
       break
     endif
@@ -204,20 +206,24 @@ endfunction
 
 function! s:MoveLeft(num)
   if a:num>0
-    exe 'normal ' . a:num . 'h'
+    let pos = getpos('.')
+    let pos[2] -= a:num
+    call setpos('.', pos)
   endif
 endfunction
 
 function! s:MoveRight(num)
   if a:num>0
-    exe 'normal ' . a:num . 'l'
+    let pos = getpos('.')
+    let pos[2] += a:num
+    call setpos('.', pos)
   endif
 endfunction
 
 function! s:MotionArgument(inner, visual)
   let current_c = getline('.')[getpos('.')[2]-1]
   if current_c==',' || current_c=='('
-    normal l
+    call <SID>MoveRight(1)
   endif
 
   " get out of "double quoted string" because [( does not take effect in it
@@ -286,9 +292,9 @@ function! s:MotionArgument(inner, visual)
 
   call <SID>MoveRight(right)
   if delete_trailing_space
-    exe 'normal l'
+    call <SID>MoveRight(1)
     call <SID>MoveToNextNonSpace()
-    exe 'normal h'
+    call <SID>MoveLeft(1)
   endif
 endfunction
 

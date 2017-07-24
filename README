@@ -1,4 +1,7 @@
-This is a mirror of http://www.vim.org/scripts/script.php?script_id=2699
+Feature added:
+  Remove dependency of normal command hl
+
+Original mirror of http://www.vim.org/scripts/script.php?script_id=2699
 
 This plugin provides a text-object 'a' (argument). You can
 d(elete), c(hange), v(select)... an argument or inner argument in familiar ways.
